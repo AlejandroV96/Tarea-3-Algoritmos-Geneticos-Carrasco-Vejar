@@ -23,3 +23,5 @@ else:
 tiempo_proceso_ini = time.process_time()
 np.random.seed(semilla)
 
+df = pd.read_csv(entrada, delimiter='\t', header=None)
+print(df)
