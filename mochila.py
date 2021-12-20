@@ -24,12 +24,50 @@ else:
 tiempo_proceso_ini = time.process_time()
 np.random.seed(semilla)
 
+def calculaPeso(data, cantidadElementos):
+          peso = 0
+          for i in range (cantidadElementos):
+                    if(data[i][2]==1):
+                              peso=peso+data[i][1]
+          return peso
+
+def calculaValor(data, cantidadElementos):
+          valor = 0
+          for i in range (cantidadElementos):
+                    if(data[i][2]==1):
+                              valor=valor+data[i][0]
+          return valor
+
+
 data = pd.read_csv(entrada,sep='\t',header=None).to_numpy()
 nombreArchivo = data[0][0]
-cantidadElementos = data[1][1]
 capacidadMochila = data[2][1]
 valorOptimo = data[3][1]
 data = pd.read_csv(entrada,sep='\t',header=None, skiprows=5, skipfooter=1, engine='python')
 data = data.drop(columns=0, axis=1).to_numpy()
+cantidadElementos = data.shape[0]
 print(data)
 print(' <---Datos leidos --->\nNombre Archivo: ', nombreArchivo,'\nCantidad elementos: ', cantidadElementos,'\nCapacidad mochila: ', capacidadMochila,'\nValor optimo: ',valorOptimo)
+
+
+for i in range(cantidadElementos):
+          data[i][2] = 0
+
+for i in range (cantidadElementos):
+          numRandom = np.random.rand(1)
+          if(numRandom<0.5):
+                    data[i][2]=0
+          else:
+                    data[i][2]=1
+
+mejorSolucion = data
+mejorSolucionPeso = calculaPeso(data,cantidadElementos)
+mejorSolucionValor = calculaValor(data,cantidadElementos)
+
+print('Solucion inicial y a la vez la mejor solucion: \n',data)
+print('Peso solucion: ',mejorSolucionPeso)
+print('Valor mejor solucion: ', mejorSolucionValor)
+if(mejorSolucionPeso<=capacidadMochila):
+          print('Es una solucion valida')
+else:
+          print('No es una solucion valida')
