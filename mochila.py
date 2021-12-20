@@ -49,7 +49,6 @@ cantidadElementos = data.shape[0]
 print(data)
 print(' <---Datos leidos --->\nNombre Archivo: ', nombreArchivo,'\nCantidad elementos: ', cantidadElementos,'\nCapacidad mochila: ', capacidadMochila,'\nValor optimo: ',valorOptimo)
 
-
 for i in range(cantidadElementos):
           data[i][2] = 0
 
