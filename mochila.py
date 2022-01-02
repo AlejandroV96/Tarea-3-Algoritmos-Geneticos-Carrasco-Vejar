@@ -64,57 +64,18 @@ mejorSolucion = data
 mejorSolucionPeso = calculaPeso(data,cantidadElementos)
 mejorSolucionValor = calculaValor(data,cantidadElementos)
 mejorSolucionGeneracion = 0
-#print('Solucion inicial y mejor solucion: ',data)
+print('Solucion inicial y mejor solucion: \n',data)
 print('Valor solucion inicial: ',calculaValor(mejorSolucion,cantidadElementos))
 print('Peso solucion inicial: ',calculaPeso(mejorSolucion,cantidadElementos))
 
 if(mejorSolucionPeso > capacidadMochila):
+          print('Solucion inicial no factible\n')
           #for i in range(cantidadElementos):
                     #mejorSolucion[i][2] = 0
           mejorSolucionPeso = 99999999
           mejorSolucionValor = 0
-
-#print('data: ',data)
-#print('mejor sol: ', mejorSolucion)          
-
-#vector de probabilidades
-#vectorProbabilidades = np.full((cantidadElementos),fill_value=-1,dtype=float)
-#sumVectorProbabilidades = 0
-#for i in range(cantidadElementos):
-#         vectorProbabilidades[i] = (i+1)** -tau
-#          sumVectorProbabilidades = sumVectorProbabilidades+((i+1)** -tau)
-#print('Vector probabilidades :\n',vectorProbabilidades)
-#print(sumVectorProbabilidades)
-
-#vector de proporciones
-#vectorProporciones = np.full((cantidadElementos),fill_value=-1,dtype=float)
-#sumVectorProporciones = 0
-#for i in range(cantidadElementos):
-#          vectorProporciones[i]=vectorProbabilidades[i]/sumVectorProbabilidades
-#         #sumVectorProporciones = sumVectorProporciones+vectorProbabilidades[i]/sumVectorProbabilidades
-#print('Vector proporciones :\n',vectorProporciones)
-#print(sumVectorProporciones)
-
-#vector ruleta
-#vectorRuleta = np.full((cantidadElementos),fill_value=-1,dtype=float)
-#for i in range(cantidadElementos):
-#          if(i==0):
-#                    vectorRuleta[i]=vectorProporciones[i]
-#          else:
-#                    vectorRuleta[i] = vectorRuleta[i-1]+vectorProporciones[i]
-#print('Ruleta: \n',vectorRuleta)
-
-#fitness
-#vectorFitness = np.full((cantidadElementos),fill_value=-1,dtype=float)
-#for i in range(cantidadElementos):
-#          vectorFitness[i] = data[i][0]/data[i][1]
-#print('Vector fitness: \n', vectorFitness)
-
-#fitness ordenado
-#vectorFitnessOrdenado = vectorFitness
-#vectorFitnessOrdenado =  np.sort(vectorFitnessOrdenado)
-#vectorFitnessOrdenado = np.flip(vectorFitnessOrdenado)
-#print('Vector fitness ordenado: \n', vectorFitnessOrdenado)
+else:
+          print('Solucion inicial factible')
 
 generacion = 0
 while generacion < ite:
@@ -129,8 +90,10 @@ while generacion < ite:
                     for i in range(cantidadElementos):
                               if(data[i][2] == 1):
                                         cantidadValoresDentroMochila=cantidadValoresDentroMochila + 1     
-                                        elementosDentroMochila.append(i)
-                    #print('elementos dentro de la mochila: ',cantidadValoresDentroMochila)         
+                                        elementosDentroMochila.append([i, data[i][0]/data[i][1]])
+                    ##print('cantidad elementos dentro de la mochila: ',cantidadValoresDentroMochila)    
+                    ##print('lista elementos dentro de la mochila',elementosDentroMochila)   
+                      
                     #vector probabilidades dentro while
                     vectorProbabilidades = np.full((cantidadValoresDentroMochila),fill_value=-1,dtype=float)
                     sumVectorProbabilidades = 0
@@ -157,26 +120,54 @@ while generacion < ite:
                                         vectorRuleta[i] = vectorRuleta[i-1]+vectorProporciones[i]
                     #print('Ruleta dentro iteracion: \n',vectorRuleta)
 
+                    elementosDentroMochila = sorted(elementosDentroMochila, key=lambda fitness : fitness[1])
+                    ##print('lista ordenada: ',elementosDentroMochila)
 
                     #fitness dentro while
-                    vectorFitness = np.full((cantidadValoresDentroMochila),fill_value=-1,dtype=float)
-                    for i in range(cantidadValoresDentroMochila):
-                              vectorFitness[i] = data[elementosDentroMochila[i]][0]/data[elementosDentroMochila[i]][1]
+                    #vectorFitness = np.full((cantidadValoresDentroMochila),fill_value=-1,dtype=float)
+                    #for i in range(cantidadValoresDentroMochila):
+                    #          vectorFitness[i] = data[elementosDentroMochila[i]][0]/data[elementosDentroMochila[i]][1]
                     #print('Vector fitness dentro iteracion: \n', vectorFitness)
 
                     #fitness ordenado dentro while
-                    vectorFitnessOrdenado = vectorFitness
-                    vectorFitnessOrdenado =  np.sort(vectorFitnessOrdenado)
+                    #vectorFitnessOrdenado = vectorFitness
+                    #vectorFitnessOrdenado =  np.sort(vectorFitnessOrdenado)
                     #vectorFitnessOrdenado = np.flip(vectorFitnessOrdenado)
                     #print('Vector fitness ordenado dentro iteracion: \n', vectorFitnessOrdenado)
+
+                    #seleccion ruleta
+                    numRandom = np.random.rand(1)
+                    for i in range(vectorRuleta.shape[0]):
+                              if(numRandom <= vectorRuleta[i]):
+                                        seleccion = i
+                                        break
+                    #print('numero aleatorio: ',numRandom,'indice de ruleta seleccionado: ',seleccion)
+
+                    #print(data[elementosDentroMochila[seleccion]][2])
+                    ##print('elemnto dentro seleccion: ',elementosDentroMochila[seleccion])
+                    ##print('elemnto dentro seleccion: ',elementosDentroMochila[seleccion][0])
+
+                    
+                    
+                    data[elementosDentroMochila[seleccion][0]][2]=0
+                    #for i in range(cantidadElementos):
+                    #          if (vectorFitnessOrdenado[seleccion]==data[i][0]/data[i][1]):
+                                        #print('encontro coincidencia', vectorFitnessOrdenado[seleccion], '              ', data[i][0]/data[i][1])
+                    #                    indice=i
+                    #                    break
+                    #print('el indice es: ', indice)
+                    #data[indice][2] =0 
+                    ##print("se cambio el valor : ", elementosDentroMochila[seleccion]," por: ",0)
+
+                    ##print('nueva sol: ', data)
           
           
           else:
                     for i in range(cantidadElementos):
                               if(data[i][2] == 0):
                                         cantidadValoresFueraMochila=cantidadValoresFueraMochila + 1     
-                                        elementosFueraMochila.append(i) 
-                    #print('elementos fuera de la mochila: ',cantidadValoresFueraMochila)
+                                        elementosFueraMochila.append([i,data[i][0]/data[i][1]]) 
+                    ##print('elementos fuera de la mochila: ',cantidadValoresFueraMochila)
 
                     #vector probabilidades dentro while
                     vectorProbabilidades = np.full((cantidadValoresFueraMochila),fill_value=-1,dtype=float)
@@ -204,50 +195,52 @@ while generacion < ite:
                                         vectorRuleta[i] = vectorRuleta[i-1]+vectorProporciones[i]
                     #print('Ruleta dentro iteracion else: \n',vectorRuleta)
 
+                    elementosFueraMochila = sorted(elementosFueraMochila, key=lambda fitness : fitness[1],reverse=True)
+                    ##print('lista ordenada: ',elementosFueraMochila)
+
                     #fitness dentro while
-                    vectorFitness = np.full((cantidadValoresFueraMochila),fill_value=-1,dtype=float)
-                    for i in range(cantidadValoresFueraMochila):
-                              vectorFitness[i] = data[elementosFueraMochila[i]][0]/data[elementosFueraMochila[i]][1]
+                    #vectorFitness = np.full((cantidadValoresFueraMochila),fill_value=-1,dtype=float)
+                    #for i in range(cantidadValoresFueraMochila):
+                    #          vectorFitness[i] = data[elementosFueraMochila[i]][0]/data[elementosFueraMochila[i]][1]
                     #print('Vector fitness dentro iteracion else: \n', vectorFitness)
 
                     #fitness ordenado dentro while
-                    vectorFitnessOrdenado = vectorFitness
-                    vectorFitnessOrdenado =  np.sort(vectorFitnessOrdenado)
-                    vectorFitnessOrdenado = np.flip(vectorFitnessOrdenado)
+                    #vectorFitnessOrdenado = vectorFitness
+                   # vectorFitnessOrdenado =  np.sort(vectorFitnessOrdenado)
+                    #vectorFitnessOrdenado = np.flip(vectorFitnessOrdenado)
                     #print('Vector fitness ordenado dentro iteracion else: \n', vectorFitnessOrdenado)
 
+                    #seleccion ruleta
+                    numRandom = np.random.rand(1)
+                    for i in range(vectorRuleta.shape[0]):
+                              if(numRandom <= vectorRuleta[i]):
+                                        seleccion = i
+                                        break
+                    #print('numero aleatorio: ',numRandom,'indice de ruleta seleccionado: ',seleccion)
+
+                    
+                    data[elementosFueraMochila[seleccion][0]][2]=1
+                    #for i in range(cantidadElementos):
+                    #          if (vectorFitnessOrdenado[seleccion]==data[i][0]/data[i][1]):
+                                        #print('encontro coincidencia', vectorFitnessOrdenado[seleccion], '              ', data[i][0]/data[i][1])
+                    #                    indice=i
+                    #                    break
+                    #print('el indice es: ', indice)
+                    #data[indice][2] =1 
+                    ##print("se cambio el valor : ", elementosFueraMochila[seleccion]," por: ",1)
+
+                    
 
 
-         #seleccion ruleta
-          numRandom = np.random.rand(1)
-          for i in range(vectorRuleta.shape[0]):
-                    if(numRandom <= vectorRuleta[i]):
-                              seleccion = i
-                              break
-          #print('numero aleatorio: ',numRandom,'indice de ruleta seleccionado: ',seleccion)
 
-          
-
-          for i in range(cantidadElementos):
-                    if (vectorFitnessOrdenado[seleccion]==data[i][0]/data[i][1]):
-                              #print('encontro coincidencia', vectorFitnessOrdenado[seleccion], '              ', data[i][0]/data[i][1])
-                              indice=i
-                              break
-          #print('el indice es: ', indice)
-
-          if (data[indice][2] == 0):
-                    data[indice][2] =1
-                    #print('se cambio el valor: ',indice, 'por uno')
-          else:    
-                    data[indice][2] =0 
-                    #print('se cambio el valor: ',indice, 'por cero')
+         
           
           print('Generacion: ',generacion)
           #print(data)
-          #print('Valor: ',calculaValor(data,cantidadElementos))
-          #print('Peso: ',calculaPeso(data,cantidadElementos))
+          ##print('Valor: ',calculaValor(data,cantidadElementos))
+          ##print('Peso: ',calculaPeso(data,cantidadElementos))
 
-          if(calculaPeso(data,cantidadElementos)<=capacidadMochila and calculaValor(data,cantidadElementos) > mejorSolucionValor):
+          if(calculaPeso(data,cantidadElementos)<=capacidadMochila and calculaValor(data,cantidadElementos) >= mejorSolucionValor):
                     mejorSolucion=data
                     mejorSolucionPeso= calculaPeso(mejorSolucion,cantidadElementos)
                     mejorSolucionValor = calculaValor(mejorSolucion, cantidadElementos)
@@ -265,7 +258,7 @@ tiempo_proceso_fin =time.process_time()
 print('\n\n<--- Terminado --->')
 print('Tiempo de Procesamiento: %f segundos' % (tiempo_proceso_fin - tiempo_proceso_ini))
 print('Resultados')
-print('Mejor solucion: ')
+print('Mejor solucion: \n',mejorSolucion)
 print('Peso mejor solucion: ', mejorSolucionPeso)
 print('Valor mejor solucion: ', mejorSolucionValor)
 print('Iteracion mejor solucion: ', mejorSolucionGeneracion)
