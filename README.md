@@ -1,5 +1,5 @@
 # Problema de la mochila a través del metodo de Extremal Optimisation.
-Alejandro Vejar Henriquez
+Alejandro Vejar Henriquez,
 Kevin Carrasco Zenteno
 
 Aca se presenta la implementación en Python de la solución para el problema de las mochila mediante la implementación del Extremal Optimisation.
